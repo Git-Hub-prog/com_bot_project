@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { MONGO_URI } = require("./env");
+const { MONGO_URI, MONGO_DB_NAME } = require("./env");
 
 const connectDB = async () => {
     try {
@@ -12,6 +12,7 @@ const connectDB = async () => {
         }
 
         await mongoose.connect(MONGO_URI, {
+            dbName: MONGO_DB_NAME,
             serverSelectionTimeoutMS: 10000,
             maxPoolSize: 10,
         });
