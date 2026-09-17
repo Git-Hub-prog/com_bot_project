@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const { MONGO_URI } = require("./env");
 
 const connectDB = async () => {
     try {
-        if (!process.env.MONGO_URI) {
+        if (!MONGO_URI) {
             if (process.env.NODE_ENV === "production") {
                 throw new Error("MONGO_URI is required in production");
             }
@@ -10,7 +11,7 @@ const connectDB = async () => {
             return;
         }
 
-        await mongoose.connect(process.env.MONGO_URI, {
+        await mongoose.connect(MONGO_URI, {
             serverSelectionTimeoutMS: 10000,
             maxPoolSize: 10,
         });

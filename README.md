@@ -83,7 +83,7 @@ On Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-Set at minimum: `NODE_ENV`, `PORT`, `MONGO_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, and `CLIENT_URL`. The server also includes `server/.env.example`.
+Set at minimum: `NODE_ENV`, `PORT`, `MONGO_URI` (or the supported deployment alias `ATLASDB_URL`), `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, and `CLIENT_URL`. The server also includes `server/.env.example`.
 
 When deploying the frontend separately, copy `client/.env.example` to `client/.env` and set `VITE_API_URL` to the public backend API URL, for example `https://api.example.com/api`. Vite embeds this value at build time, so rebuild after changing it.
 
@@ -140,7 +140,7 @@ Deploy `server/` to a Node-compatible service such as Render, Railway, Fly.io, o
 
 ### MongoDB Atlas
 
-Create an Atlas cluster and least-privilege database user, allow the backend service's network access, and set `MONGO_URI` to the Atlas connection string.
+Create an Atlas cluster and least-privilege database user, allow the backend service's network access, and set `MONGO_URI` to the Atlas connection string. If your hosting provider already uses `ATLASDB_URL`, the server accepts that name as an alias. Set only one of these variables and store it as a deployment secret.
 
 ### Production environment
 

@@ -6,6 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, "..", "..", ".env") });
 
 const requiredEnv = ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET"];
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+const mongoUri = process.env.MONGO_URI || process.env.ATLASDB_URL;
 
 if (missingEnv.length) {
   throw new Error(`Missing required authentication environment variables: ${missingEnv.join(", ")}`);
@@ -19,10 +20,14 @@ if (process.env.CLIENT_URL === "*") {
   throw new Error("CLIENT_URL cannot be '*' when authentication cookies are enabled");
 }
 
+if (process.env.NODE_ENV === "production" && /^(mongodb:\/\/localhost|mongodb:\/\/127\.0\.0\.1)/i.test(mongoUri || "")) {
+  throw new Error("A production deployment must use a hosted MongoDB connection string");
+}
+
 module.exports = {
   PORT: process.env.PORT || 5000,
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
-  MONGO_URI: process.env.MONGO_URI,
+  MONGO_URI: mongoUri,
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   ACCESS_TOKEN_EXPIRES: process.env.ACCESS_TOKEN_EXPIRES_IN || process.env.ACCESS_TOKEN_EXPIRES || "15m",
