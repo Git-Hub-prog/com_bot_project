@@ -17,8 +17,9 @@ const connectDB = async () => {
         });
         console.log("MongoDB connected successfully");
     } catch (error) {
-        if (process.env.NODE_ENV === "production") throw error;
-        console.warn("MongoDB connection failed, continuing in local demo mode:", error.message);
+        // A configured database must be reachable; otherwise the app could
+        // appear healthy while silently failing to persist user data.
+        throw error;
     }
 };
 
