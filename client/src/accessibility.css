@@ -1,0 +1,1 @@
+button,a,input,textarea,select{font:inherit}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #5f8f3b;outline-offset:3px}.button:focus-visible{outline-color:#345226}.notification-button,.icon-button{cursor:pointer}.sidebar nav button{cursor:pointer}

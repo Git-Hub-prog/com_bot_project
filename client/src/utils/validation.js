@@ -1,0 +1,6 @@
+import { z } from 'zod';
+
+export const emailSchema = z.string().trim().email('Enter a valid email address.').max(254);
+export const passwordSchema = z.string().min(8, 'Use at least 8 characters.').regex(/[a-z]/, 'Include a lowercase letter.').regex(/[A-Z]/, 'Include an uppercase letter.').regex(/\d/, 'Include a number.');
+export const publicTestimonialSchema = z.object({ name: z.string().trim().min(1, 'Name is required.').max(120), email: emailSchema, role: z.string().max(120), company: z.string().max(120), rating: z.number().int().min(1).max(5).optional(), review: z.string().trim().min(1, 'Review is required.').max(5000) });
+export const spaceSchema = z.object({ name: z.string().trim().min(1, 'Space name is required.').max(120), slug: z.string().trim().min(1, 'Slug is required.').regex(/^[a-zA-Z0-9-]+$/, 'Use letters, numbers, and hyphens only.'), description: z.string().max(1000), customPrompt: z.string().max(500), brandColor: z.string().regex(/^#[0-9a-f]{6}$/i, 'Choose a valid brand color.') });

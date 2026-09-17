@@ -1,0 +1,35 @@
+const dotenv = require("dotenv");
+const path = require("path");
+
+dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
+dotenv.config({ path: path.resolve(__dirname, "..", "..", ".env") });
+
+const requiredEnv = ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET"];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+if (missingEnv.length) {
+  throw new Error(`Missing required authentication environment variables: ${missingEnv.join(", ")}`);
+}
+
+if (process.env.NODE_ENV === "production" && !process.env.CLIENT_URL) {
+  throw new Error("CLIENT_URL is required in production for credentialed CORS");
+}
+
+if (process.env.CLIENT_URL === "*") {
+  throw new Error("CLIENT_URL cannot be '*' when authentication cookies are enabled");
+}
+
+module.exports = {
+  PORT: process.env.PORT || 5000,
+  CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
+  MONGO_URI: process.env.MONGO_URI,
+  JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
+  JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
+  ACCESS_TOKEN_EXPIRES: process.env.ACCESS_TOKEN_EXPIRES_IN || process.env.ACCESS_TOKEN_EXPIRES || "15m",
+  REFRESH_TOKEN_EXPIRES: process.env.REFRESH_TOKEN_EXPIRES_IN || process.env.REFRESH_TOKEN_EXPIRES || "7d",
+  COOKIE_SECURE: process.env.COOKIE_SECURE === "true" || process.env.NODE_ENV === "production",
+  COOKIE_SAME_SITE: process.env.COOKIE_SAME_SITE || "lax",
+  UPLOAD_MAX_SIZE_MB: Number(process.env.UPLOAD_MAX_SIZE_MB || 5),
+  EMAIL_FROM: process.env.EMAIL_FROM || process.env.SMTP_FROM || "TestimonialHub <no-reply@testimonialhub.local>",
+  IP_HASH_SECRET: process.env.IP_HASH_SECRET || "dev-ip-hash",
+};

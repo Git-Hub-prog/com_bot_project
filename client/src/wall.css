@@ -1,0 +1,26 @@
+.wall-quote { position: relative; }
+
+.wall-header h1 em,
+.wall-label,
+.wall-footer strong { color: var(--wall-brand, #80a45e); }
+
+.wall-header .button.primary span { color: var(--wall-brand, #a8c96f); }
+
+.wall-header .public-logo { width: 32px; height: 32px; border-radius: 9px; object-fit: cover; }
+
+.featured-quote::before {
+  content: 'Featured';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #5e8745;
+  background: #e3f0d5;
+  font: 700 9px/1 'DM Sans', sans-serif;
+  letter-spacing: .04em;
+}
+
+@media (max-width: 650px) {
+  .wall-grid { columns: 1; }
+}
