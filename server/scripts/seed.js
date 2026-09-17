@@ -1,7 +1,6 @@
-require("dotenv").config({ path: require("path").resolve(__dirname, "..", ".env") });
-
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
+const { MONGO_URI, MONGO_DB_NAME } = require("../config/env");
 const User = require("../models/User");
 const Space = require("../models/Space");
 const Testimonial = require("../models/Testimonial");
@@ -24,8 +23,8 @@ const testimonials = [
 
 const run = async () => {
   if (process.env.NODE_ENV === "production") throw new Error("The development seed cannot run in production");
-  if (!process.env.MONGO_URI) throw new Error("MONGO_URI is required to seed the database");
-  await mongoose.connect(process.env.MONGO_URI);
+  if (!MONGO_URI) throw new Error("MONGO_URI or ATLASDB_URL is required to seed the database");
+  await mongoose.connect(MONGO_URI, { dbName: MONGO_DB_NAME });
   const owner = await User.findOneAndUpdate({ email: demoOwner.email }, { $set: { ...demoOwner } }, { upsert: true, new: true, setDefaultsOnInsert: true });
   const space = await Space.findOneAndUpdate(
     { slug: "acme-corp" },
