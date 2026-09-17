@@ -12,6 +12,7 @@ export const ROUTES = {
   reviews: '/dashboard/spaces/:spaceId/reviews',
   settings: '/dashboard/spaces/:spaceId/settings',
   embed: '/dashboard/spaces/:spaceId/embed',
+  profile: '/dashboard/profile',
   collect: '/collect/:spaceSlug',
   wall: '/wall/:spaceSlug',
 };
@@ -29,6 +30,7 @@ export const resolveRoute = (pathname) => {
     if (segments[1] === 'spaces' && segments[2] === 'new' && segments.length === 3) return { name: 'new-space', segments };
     if (segments[1] === 'spaces' && segments.length === 3) return { name: 'space', segments };
     if (segments[1] === 'spaces' && ['reviews', 'settings', 'embed'].includes(segments[3]) && segments.length === 4) return { name: segments[3], segments };
+    if (segments[1] === 'profile' && segments.length === 2) return { name: 'profile', segments };
   }
   return { name: 'not-found', segments };
 };
