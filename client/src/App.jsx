@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import './App.css';
 import './wall.css';
 import './home.css';
+import './landing.css';
 import './space-card.css';
 import './empty-states.css';
 import './responsive.css';
@@ -14,6 +15,7 @@ import { apiRequest } from './services/api';
 import { useAuth } from './context/useAuth';
 
 const API = '/api';
+void HomePageLegacy;
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const validateImageFile = (file) => {
@@ -22,8 +24,14 @@ const validateImageFile = (file) => {
   if (file.size > MAX_IMAGE_SIZE) return 'Images must be 5 MB or smaller.';
   return '';
 };
-
 function HomePage() {
+  return <HomePageLanding />;
+}
+
+function HomePageLanding() {
+  return <main className="home-shell"><div className="home-nav"><div className="public-brand"><div className="brand-symbol">T</div><strong>TestimonialHub</strong></div><div className="home-actions"><a className="text-button" href={ROUTES.login}>Sign in</a><a className="button primary" href={ROUTES.signup}>Create Your Space <span>→</span></a></div></div><section className="home-hero"><span className="eyebrow">Customer stories, collected beautifully</span><h1>Collect authentic customer stories.<br /><em>Turn feedback into social proof.</em></h1><p>Give every happy customer an easy way to share their experience, then turn those words into proof your next customer can trust.</p><div className="home-cta"><a className="button primary" href={ROUTES.signup}>Create Your Space <span>→</span></a><a className="button secondary" href="/wall/acme">See Demo <span>↗</span></a></div></section><section className="home-sections"><article><span className="home-icon">01</span><h2>How it works</h2><p>Share one beautiful collection link. Customers respond in minutes. You choose what earns a place in your story.</p></article><article><span className="home-icon">02</span><h2>Moderate with confidence</h2><p>Review every submission, approve the best stories, and keep your public proof thoughtful and on-brand.</p></article><article><span className="home-icon">03</span><h2>Publish everywhere</h2><p>Showcase approved testimonials on a Wall of Love or add a lightweight embed widget to your website.</p></article></section><section className="home-feature-grid"><div><span className="eyebrow">Everything in one place</span><h2>Proof that gets better over time.</h2><p>See your collection grow with clear rating metrics, featured stories, and a searchable moderation inbox.</p><div className="home-stat-row"><strong>94%<small>response rate</small></strong><strong>4.8<small>average rating</small></strong><strong>128<small>customer stories</small></strong></div></div><div className="home-feature-card"><span className="eyebrow">Wall of Love</span><blockquote>“The easiest way we’ve found to turn customer wins into something our whole team can share.”</blockquote><span>— Maya, Customer Success Lead</span><div className="home-widget-preview"><b>What customers are saying</b><span>★★★★★</span><small>Featured testimonials · Grid widget</small></div></div></section></main>;
+}
+function HomePageLegacy() {
   return <main className="home-shell"><div className="home-nav"><div className="public-brand"><div className="brand-symbol">T</div><strong>TestimonialHub</strong></div><div className="home-actions"><a className="text-button" href={ROUTES.login}>Sign in</a><a className="button primary" href={ROUTES.signup}>Start collecting <span>→</span></a></div></div><section className="home-hero"><span className="eyebrow">Customer stories, collected beautifully</span><h1>Turn happy customers into your best marketing.</h1><p>Collect authentic testimonials, review every story, and publish social proof that helps the right customers say yes.</p><div className="home-cta"><a className="button primary" href={ROUTES.signup}>Create your free space <span>→</span></a><a className="button secondary" href="/wall/acme">See an example <span>↗</span></a></div></section><section className="home-proof"><div><strong>2 min</strong><span>to collect a story</span></div><div><strong>94%</strong><span>average response rate</span></div><div><strong>5.0</strong><span>average customer rating</span></div></section></main>;
 }
 
@@ -46,7 +54,6 @@ function Avatar({ name, src, size = 'medium' }) {
 function Toast({ message }) {
   return message ? <div className="toast" role="status">{message}</div> : null;
 }
-
 function EmptyState({ title, message, action, onAction }) {
   return <div className="empty-state empty-state-enhanced"><div className="empty-state-mark">✦</div><h2>{title}</h2><p>{message}</p>{action && <button className="button primary" onClick={onAction}>{action} <span>→</span></button>}</div>;
 }
