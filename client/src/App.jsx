@@ -14,7 +14,7 @@ import { ROUTES, resolveRoute } from './routes';
 import { apiRequest } from './services/api';
 import { useAuth } from './context/useAuth';
 
-const API = '/api';
+const API = import.meta.env.VITE_API_URL || '/api';
 void HomePageLegacy;
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;

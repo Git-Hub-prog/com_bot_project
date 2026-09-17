@@ -85,6 +85,8 @@ Copy-Item .env.example .env
 
 Set at minimum: `NODE_ENV`, `PORT`, `MONGO_URI`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, and `CLIENT_URL`. The server also includes `server/.env.example`.
 
+When deploying the frontend separately, copy `client/.env.example` to `client/.env` and set `VITE_API_URL` to the public backend API URL, for example `https://api.example.com/api`. Vite embeds this value at build time, so rebuild after changing it.
+
 Never commit `.env` or real credentials. Environment files are ignored while example templates remain tracked.
 
 ## Running locally
