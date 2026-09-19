@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === "production" && /^(mongodb:\/\/localhost|mongodb:\/
 
 module.exports = {
   PORT: process.env.PORT || 5000,
-  CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
+  CLIENT_URL: process.env.CLIENT_URL || process.env.RENDER_EXTERNAL_URL || "http://localhost:5173",
   MONGO_URI: mongoUri,
   MONGO_DB_NAME: process.env.MONGO_DB_NAME || "testimonialhub",
   MONGO_DNS_SERVERS: dnsServers,
