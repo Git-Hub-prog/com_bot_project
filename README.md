@@ -1,155 +1,86 @@
-# TestimonialHub
+# 1. Project Name
+**Testimonial & Social Proof Collector (TestimonialHub)**
 
-TestimonialHub is a full-stack customer testimonial platform. Teams create branded Spaces, collect feedback through public forms, moderate submissions, and publish approved customer stories on a shareable Wall of Love or embedded website widget.
+# 2. Project Description
+TestimonialHub is a full-stack platform that empowers business owners to effortlessly collect, moderate, and display customer reviews. Users can launch branded "Spaces" to gather feedback through public forms without requiring clients to log in. Business owners can then moderate submissions in an inbox, filter by ratings, and instantly generate beautiful, embeddable "Wall of Love" widgets to showcase their best social proof on any website.
 
-## Features
+# 3. Technology Stack Used
+- **Frontend**: React 19, Vite, Tailwind CSS, shadcn/ui components (Coss UI).
+- **Backend**: Node.js, Express 5, RESTful APIs.
+- **Database**: MongoDB with Mongoose ODM.
+- **Image Storage**: Cloudinary (for avatars and company logos).
+- **Security & Auth**: JSON Web Tokens (JWT), HTTP-only cookies, bcrypt for password hashing, Helmet for security headers.
 
-- Authentication with secure HTTP-only cookies
-- Email verification simulation for local development
-- Rotating refresh tokens with automatic access-token renewal
-- Password reset flow
-- Space creation, editing, deletion, and branding
-- Public testimonial collection forms
-- Validated image uploads for logos and customer avatars
-- Testimonial moderation and approval workflow
-- Search and status filters
-- Rating filters and rating distribution metrics
-- Wall of Love for approved testimonials
-- Embed Generator for grid, carousel, and badge widgets
+# 4. How to Install Dependencies
+This project uses a monorepo structure (npm workspaces) containing both the client and server.
 
-## Tech Stack
-
-### Frontend
-
-- React 19
-- Vite
-- Axios with refresh-token interceptors
-- Zod client-side validation
-- Responsive CSS and accessible semantic UI
-
-### Backend
-
-- Node.js
-- Express 5
-- REST API
-- Multer for multipart image uploads
-- Nodemailer for email delivery or development simulation
-
-### Database and security
-
-- MongoDB with Mongoose
-- JWT access and refresh tokens
-- HTTP-only, credentialed cookies
-- bcrypt password hashing
-- Helmet security headers
-- CORS configuration
-- Express rate limiting
-- Input validation and upload signature checks
-
-## Project structure
-
-```text
-client/       React/Vite frontend
-server/       Express/Mongoose API
-docs/         Extended documentation
-API.md        REST API reference
-```
-
-## Installation
-
-Requirements: Node.js 18+, npm, and a MongoDB database. MongoDB Atlas is recommended for hosted environments.
-
+You can install all dependencies for both the frontend and backend from the root directory with a single command:
 ```bash
-git clone <repository-url>
-cd testimonialhub
-npm install
-
-cd client
-npm install
-
-cd ../server
+git clone https://github.com/Git-Hub-prog/com_bot_project.git
+cd com_bot_project
 npm install
 ```
 
-Create the environment file from the included template:
+*(Alternatively, you can navigate into the `client` and `server` folders and run `npm install` individually).*
 
+# 5. How to Configure Environment Variables
+You need to set up environment variables for the backend to run properly. 
+
+1. Navigate to the `server` directory.
+2. Copy the example configuration file:
+   ```bash
+   cd server
+   cp .env.example .env
+   ```
+3. Open the newly created `server/.env` file and fill in the required keys. Your file should look something like this:
+   ```env
+   NODE_ENV=development
+   PORT=5000
+   MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/testimonialhub
+   JWT_ACCESS_SECRET=your_super_secret_access_key
+   JWT_REFRESH_SECRET=your_super_secret_refresh_key
+   CLIENT_URL=http://localhost:5173
+   
+   # Cloudinary Setup for Image Uploads
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+   CLOUDINARY_API_KEY=your_api_key
+   CLOUDINARY_API_SECRET=your_api_secret
+   ```
+
+*(Note: The `client` directory does not require an `.env` file unless you change the backend URL. By default, it proxies API requests to `localhost:5000` via Vite configuration).*
+
+# 6. How to Run the Project Locally
+Once dependencies are installed and your `.env` is configured, you can start the development servers.
+
+From the **root directory**, you can run the client and server concurrently using the built-in npm workspace scripts:
+
+**Terminal 1 (Backend API):**
 ```bash
-cp .env.example .env
+npm run dev:server
 ```
+*The API will start at `http://localhost:5000`.*
 
-On Windows PowerShell:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Set at minimum: `NODE_ENV`, `PORT`, `MONGO_URI` (or the supported deployment alias `ATLASDB_URL`), `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, and `CLIENT_URL`. The server also includes `server/.env.example`.
-
-When deploying the frontend separately, copy `client/.env.example` to `client/.env` and set `VITE_API_URL` to the public backend API URL, for example `https://api.example.com/api`. Vite embeds this value at build time, so rebuild after changing it.
-
-Never commit `.env` or real credentials. Environment files are ignored while example templates remain tracked.
-
-## Running locally
-
-Run the backend and frontend in separate terminals:
-
+**Terminal 2 (Frontend React App):**
 ```bash
-cd server
-npm run dev
+npm run dev:client
 ```
+*The frontend will start at `http://localhost:5173`.*
 
-```bash
-cd client
-npm run dev
-```
+*(To start the unified production build locally, you can run `npm run build` followed by `npm start` from the root directory).*
 
-The frontend runs at `http://localhost:5173`, the API at `http://localhost:5000`, and health is available at `GET /api/health`.
+# 7. Database Setup
+This project requires **MongoDB**. The easiest way to set this up is using a free cloud database via MongoDB Atlas.
 
-### Seed demo data
+1. Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Create a new Cluster and a database user with a password.
+3. Allow your IP address in the Network Access settings (or use `0.0.0.0/0` to allow all connections).
+4. Click "Connect" -> "Connect your application" and copy the connection string.
+5. Replace `<password>` with your database user's password, and paste the string into your `server/.env` file as the `MONGO_URI`.
 
-With a development `MONGO_URI` configured, seed a verified demo owner, an Acme Corp Space, and testimonials covering pending, approved, rejected, archived, featured, and liked states:
+*(Optional: To quickly test the app, you can seed dummy data by running `npm run seed` inside the `server/` directory).*
 
-```bash
-cd server
-npm run seed
-```
-
-Demo login: `demo@testimonialhub.local` / `DemoPass1`. The seed is safe to rerun for the demo Space; it refreshes that Space's testimonials and never runs when `NODE_ENV=production`.
-
-For a production frontend build:
-
-```bash
-cd client
-npm run build
-npm run preview
-```
-
-## API documentation
-
-See [API.md](API.md) for endpoint methods, authentication requirements, request and response formats, query parameters, errors, and cURL examples.
-
-## Deployment
-
-### Frontend
-
-Build the client with `npm run build` from `client/`, then deploy `client/dist` to a static host such as Vercel, Netlify, Cloudflare Pages, or an object-storage CDN. Configure the frontend API URL when the backend uses a different origin.
-
-### Backend
-
-Deploy `server/` to a Node-compatible service such as Render, Railway, Fly.io, or a container platform. Install dependencies and run `npm start`. The service must expose the configured `PORT` and should use `GET /api/health` for readiness checks.
-
-### MongoDB Atlas
-
-Create an Atlas cluster and least-privilege database user, allow the backend service's network access, and set `MONGO_URI` to the Atlas connection string. If your hosting provider already uses `ATLASDB_URL`, the server accepts that name as an alias. Set only one of these variables and store it as a deployment secret.
-
-### Production environment
-
-Configure the variables from `.env.example` as hosting-provider secrets:
-
-- Use long random JWT secrets and set `NODE_ENV=production`.
-- Set `CLIENT_URL` to the exact deployed frontend origin; wildcard CORS is not supported with credentialed cookies.
-- Use HTTPS with `COOKIE_SECURE=true`.
-- Configure SMTP variables for real email delivery.
-- Set upload limits appropriate for the host.
-
-After deployment, verify login, refresh, logout, public collection, moderation, and `/api/health`.
+# 8. Assumptions or Limitations
+- **Unified Deployment Architecture**: The server is explicitly configured to serve the compiled Vite frontend from `client/dist` when `NODE_ENV=production`. This assumes you will deploy the app as a single web service (e.g., on Render or Heroku) rather than deploying the frontend separately to Vercel/Netlify.
+- **Cloudinary Integration**: It is assumed you have created a folder named `testimonialhub` inside your Cloudinary account. All images uploaded by users will be streamed directly into this folder.
+- **Email Verification**: Currently, email verification and password resets simulate sending emails (logging to the console) unless valid SMTP server credentials are provided in the `.env` file.
+- **Embed Generator**: The Wall of Love embed widget relies on users pasting an `<iframe>` snippet into their target website. Certain strict website platforms (like some WordPress setups) may block or restrict iframe usage.
