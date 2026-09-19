@@ -84,3 +84,6 @@ This project requires **MongoDB**. The easiest way to set this up is using a fre
 - **Cloudinary Integration**: It is assumed you have created a folder named `testimonialhub` inside your Cloudinary account. All images uploaded by users will be streamed directly into this folder.
 - **Email Verification**: Currently, email verification and password resets simulate sending emails (logging to the console) unless valid SMTP server credentials are provided in the `.env` file.
 - **Embed Generator**: The Wall of Love embed widget relies on users pasting an `<iframe>` snippet into their target website. Certain strict website platforms (like some WordPress setups) may block or restrict iframe usage.
+
+Deployment-Render(frontend+backend):
+Link:- https://com-bot-project-1.onrender.com/
