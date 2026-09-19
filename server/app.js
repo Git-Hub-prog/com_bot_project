@@ -96,10 +96,10 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../client/dist")));
 
   // API 404 handler
-  app.use("/api/*", notFound);
+  app.use("/api", notFound);
 
   // Catch-all route to serve the React app
-  app.get("*", (req, res) => {
+  app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
   });
 } else {
