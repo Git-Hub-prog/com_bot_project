@@ -1,3 +1,5 @@
+import { Button } from './ui/button';
+
 export default function StarRating({ value = 0, onChange, interactive = false, size = 'md' }) {
   const stars = Array.from({ length: 5 }, (_, index) => index + 1);
 
@@ -6,16 +8,18 @@ export default function StarRating({ value = 0, onChange, interactive = false, s
       {stars.map((star) => {
         const active = star <= value;
         return (
-          <button
+          <Button
             key={star}
             type="button"
+            variant="ghost"
+            size="icon-sm"
             className={`star ${active ? 'active' : ''}`}
             onClick={() => interactive && onChange?.(star)}
             disabled={!interactive}
             aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
           >
             ★
-          </button>
+          </Button>
         );
       })}
     </div>

@@ -1,8 +1,21 @@
 const dotenv = require("dotenv");
 const path = require("path");
+const dns = require("dns");
 
 dotenv.config({ path: path.resolve(__dirname, "..", ".env") });
 dotenv.config({ path: path.resolve(__dirname, "..", "..", ".env") });
+
+// Some Windows DNS configurations refuse SRV lookups even though the same
+// Atlas hostname resolves normally through public DNS. Keep this opt-in so
+// deployments can use their own resolver when required.
+const dnsServers = (process.env.MONGO_DNS_SERVERS || "")
+  .split(",")
+  .map((server) => server.trim())
+  .filter(Boolean);
+
+if (dnsServers.length) {
+  dns.setServers(dnsServers);
+}
 
 const requiredEnv = ["JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET"];
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);
@@ -29,6 +42,7 @@ module.exports = {
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:5173",
   MONGO_URI: mongoUri,
   MONGO_DB_NAME: process.env.MONGO_DB_NAME || "testimonialhub",
+  MONGO_DNS_SERVERS: dnsServers,
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
   JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
   ACCESS_TOKEN_EXPIRES: process.env.ACCESS_TOKEN_EXPIRES_IN || process.env.ACCESS_TOKEN_EXPIRES || "15m",
@@ -38,4 +52,8 @@ module.exports = {
   UPLOAD_MAX_SIZE_MB: Number(process.env.UPLOAD_MAX_SIZE_MB || 5),
   EMAIL_FROM: process.env.EMAIL_FROM || process.env.SMTP_FROM || "TestimonialHub <no-reply@testimonialhub.local>",
   IP_HASH_SECRET: process.env.IP_HASH_SECRET || "dev-ip-hash",
+
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
 };

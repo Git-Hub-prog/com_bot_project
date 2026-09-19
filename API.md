@@ -35,7 +35,48 @@ curl -i -c cookies.txt -H "Content-Type: application/json" \
   http://localhost:5000/api/auth/login
 ```
 
-`signup` and `login` issue secure HTTP-only cookies. In development, signup may include a simulated verification token. `refresh` rotates the refresh session and returns a new access cookie. If refresh fails, clients should clear local session state and send the user to `/login`.
+Signup does not issue authentication cookies. Successful login and successful email verification issue secure HTTP-only access and refresh cookies. The refresh endpoint rotates the refresh session and returns a new access cookie. If refresh fails, clients should clear local session state and send the user to /login.
+
+### Email verification flow
+
+1. POST /api/auth/signup creates the account as unverified and creates a verification token valid for 24 hours. Signup does not issue authentication cookies.
+2. In development, the verification email is simulated: the token is logged by the server and returned as verification.token so the flow can be tested locally. verification.simulated is true when no usable SMTP delivery occurs.
+3. In production, the token is never returned in the API response. Configure the SMTP environment variables so the user receives the verification email.
+4. Submit the token to POST /api/auth/verify-email. A successful request marks the account as verified, clears the one-time token, issues the access and refresh httpOnly cookies, and returns the public user. The user can go directly to the dashboard without logging in again.
+5. Verification tokens expire after 24 hours. An invalid or expired token returns 400. Attempting to log in before verification returns 403 with code EMAIL_NOT_VERIFIED.
+
+Development signup response example:
+
+    {
+      "success": true,
+      "message": "Account created. Verification email simulated.",
+      "verification": {
+        "simulated": true,
+        "expiresIn": "24h",
+        "token": "temporary-development-token"
+      },
+      "user": {
+        "id": "665...",
+        "name": "Ava Morgan",
+        "email": "ava@example.com"
+      }
+    }
+
+Verification request:
+
+    curl -i -c cookies.txt -H "Content-Type: application/json" -d '{"token":"temporary-development-token"}' http://localhost:5000/api/auth/verify-email
+
+Successful verification response:
+
+    {
+      "success": true,
+      "message": "Email verified successfully",
+      "user": {
+        "id": "665...",
+        "name": "Ava Morgan",
+        "email": "ava@example.com"
+      }
+    }
 
 ## Spaces
 

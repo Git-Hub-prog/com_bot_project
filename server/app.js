@@ -90,7 +90,22 @@ app.get("/r/:shortCode", (req, res) => {
   return res.redirect(302, link.destination);
 });
 
-app.use(notFound);
+// Serve static assets in production
+if (process.env.NODE_ENV === "production") {
+  const path = require("path");
+  app.use(express.static(path.join(__dirname, "../client/dist")));
+
+  // API 404 handler
+  app.use("/api/*", notFound);
+
+  // Catch-all route to serve the React app
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+  });
+} else {
+  app.use(notFound);
+}
+
 app.use(errorHandler);
 
 module.exports = app;

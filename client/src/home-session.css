@@ -1,0 +1,2 @@
+.home-dashboard-link{position:fixed;top:143px;right:7%;z-index:5;box-shadow:0 8px 20px #26352b1a}
+@media(max-width:650px){.home-dashboard-link{top:92px;right:20px;font-size:11px;padding:10px 12px}}

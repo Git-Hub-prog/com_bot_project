@@ -18,12 +18,22 @@ const signup = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Provide a valid email and a password with at least 8 characters, including uppercase, lowercase, and a number" });
     }
     const normalizedEmail = email.trim().toLowerCase();
-    if (await User.exists({ email: normalizedEmail })) return res.status(409).json({ success: false, message: "An account already exists for this email" });
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const user = await User.create({ name: name.trim(), email: normalizedEmail, passwordHash: await bcrypt.hash(password, 12), emailVerificationToken: hashToken(verificationToken), emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
-    await sendEmail({ to: user.email, subject: "Verify your TestimonialHub email", text: `This is a simulated verification email. Verify with token: ${verificationToken}` });
-    await issueSession(res, user, req);
-    return res.status(201).json({ success: true, message: "Account created successfully. Verification email simulated.", verification: { simulated: true, expiresIn: "24h", token: process.env.NODE_ENV === "production" ? undefined : verificationToken }, user: publicUser(user) });
+    const passwordHash = await bcrypt.hash(password, 12);
+    let user = await User.findOne({ email: normalizedEmail });
+    if (user?.isVerified) return res.status(409).json({ success: false, message: "An account already exists for this email. Please sign in." });
+    if (user) {
+      user.name = name.trim();
+      user.passwordHash = passwordHash;
+      user.isVerified = false;
+      user.emailVerificationToken = hashToken(verificationToken);
+      user.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      await user.save();
+    } else {
+      user = await User.create({ name: name.trim(), email: normalizedEmail, passwordHash, isVerified: false, emailVerificationToken: hashToken(verificationToken), emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) });
+    }
+    const emailResult = await sendEmail({ to: user.email, subject: "Verify your TestimonialHub email", text: `Verify your TestimonialHub email with this token: ${verificationToken}` });
+    return res.status(201).json({ success: true, message: emailResult?.simulated ? "Account created. Verification email simulated." : "Account created. Check your email to verify your account.", verification: { simulated: Boolean(emailResult?.simulated), expiresIn: "24h", token: process.env.NODE_ENV === "production" ? undefined : verificationToken }, user: publicUser(user) });
   } catch (error) { return next(error); }
 };
 
@@ -53,6 +63,7 @@ const verifyEmail = async (req, res, next) => {
     user.emailVerificationToken = undefined;
     user.emailVerificationExpires = undefined;
     await user.save();
+    await issueSession(res, user, req);
     return res.json({ success: true, message: "Email verified successfully", user: publicUser(user) });
   } catch (error) { return next(error); }
 };

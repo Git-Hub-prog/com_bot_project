@@ -1,4 +1,4 @@
-# BrandLink Hub API
+# TestimonialHub API
 
 ## Authentication
 
@@ -9,13 +9,29 @@ Sensitive authentication endpoints use a strict IP rate limit of 10 requests per
 ### POST /api/auth/signup
 Creates an account with `name`, `email`, and a password containing at least 8 characters, including uppercase, lowercase, and a number. The password is bcrypt-hashed and a 24-hour email-verification token is created.
 
-Development responses include `verification.simulated: true` and the temporary token. The server also logs the simulated email. Production responses do not return the token.
+In development, the response includes the temporary verification token. When SMTP is unavailable or authentication fails, delivery is simulated, the server logs the email, and verification.simulated is true. Production responses do not return the token.
 
 ### POST /api/auth/login
 Validates the email and password, requires a verified email address, creates a short-lived access session and persisted refresh session, and returns only `{ id, name, email }`. Passwords and refresh tokens are never included in the response.
 
 ### POST /api/auth/verify-email
-Body: `{ "token": "..." }`. Verifies the simulated email token and marks the account as verified.
+Body: `{ "token": "..." }`. Accepts the one-time email verification token for up to 24 hours. On success, marks the account as verified, clears the token, issues the short-lived access-token and long-lived rotating refresh-token httpOnly cookies, and returns the public user. No separate login request is required after verification.
+
+Signup does not issue access or refresh cookies. The account remains unverified until the token is submitted. If an unverified account already exists for the email, signup refreshes its name, password, and 24-hour verification token. A verified duplicate email returns 409.
+
+After a successful verification request, the API immediately issues the access and refresh httpOnly cookies, so the client can redirect the user to the dashboard without a second login request.
+
+### Login before verification
+
+Login returns 403 with code EMAIL_NOT_VERIFIED when the credentials are correct but the account has not been verified:
+
+    {
+      "success": false,
+      "message": "Please verify your email before logging in",
+      "code": "EMAIL_NOT_VERIFIED"
+    }
+
+Invalid or expired verification tokens return 400 with the message Verification token is invalid or expired. Verification tokens are valid for 24 hours only.
 
 ### POST /api/auth/reset-password
 Accepts `{ "token": "...", "password": "..." }`. The reset token must be valid and unexpired, and the new password must meet the signup policy. All refresh sessions are revoked, existing access sessions are invalidated, cookies are cleared, and the user must log in again.
@@ -27,7 +43,8 @@ Request body:
 - password: string
 
 Response:
-- 201 with user details and httpOnly cookies
+- 201 with public user details and verification instructions
+- No authentication cookies until email verification succeeds
 
 ### POST /api/auth/login
 Request body:
@@ -131,7 +148,7 @@ The API verifies that the authenticated owner owns the testimonial's Space befor
 Rotates the HTTP-only refresh-token session and issues a new short-lived access token. The old session is invalidated. Reuse of an invalidated refresh token revokes all active sessions for that user.
 
 ### POST /api/auth/forgot-password
-Sends a simulated development email unless SMTP variables are configured.
+Sends a real email when SMTP is configured. In development, missing or rejected SMTP credentials fall back to a simulated email and log the reset URL. Production responses never expose reset tokens.
 
 ## Environment
 

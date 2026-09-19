@@ -24,12 +24,13 @@ export const resolveRoute = (pathname) => {
   if (segments[0] === 'reset-password' && segments.length === 2) return { name: 'reset-password', segments };
   if (segments[0] === 'collect' && segments.length === 2) return { name: 'collect', segments };
   if (segments[0] === 'wall' && segments.length === 2) return { name: 'wall', segments };
+  if (segments[0] === 'embed' && segments.length === 2) return { name: 'embed', segments };
   if (segments[0] === 'dashboard') {
     if (segments.length === 1) return { name: 'dashboard', segments };
     if (segments[1] === 'spaces' && segments.length === 2) return { name: 'spaces', segments };
     if (segments[1] === 'spaces' && segments[2] === 'new' && segments.length === 3) return { name: 'new-space', segments };
     if (segments[1] === 'spaces' && segments.length === 3) return { name: 'space', segments };
-    if (segments[1] === 'spaces' && ['reviews', 'settings', 'embed'].includes(segments[3]) && segments.length === 4) return { name: segments[3], segments };
+    if (segments[1] === 'spaces' && ['reviews', 'wall', 'settings', 'embed'].includes(segments[3]) && segments.length === 4) return { name: segments[3], segments };
     if (segments[1] === 'profile' && segments.length === 2) return { name: 'profile', segments };
   }
   return { name: 'not-found', segments };

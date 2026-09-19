@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { MONGO_URI, MONGO_DB_NAME } = require("./env");
+const { MONGO_URI, MONGO_DB_NAME, MONGO_DNS_SERVERS } = require("./env");
 
 const connectDB = async () => {
     try {
@@ -18,6 +18,12 @@ const connectDB = async () => {
         });
         console.log("MongoDB connected successfully");
     } catch (error) {
+        if (error.code === "ECONNREFUSED" && error.syscall === "querySrv") {
+            const configuredServers = MONGO_DNS_SERVERS.length
+                ? `Configured DNS servers: ${MONGO_DNS_SERVERS.join(", ")}.`
+                : "Set MONGO_DNS_SERVERS=1.1.1.1,8.8.8.8 if your local DNS server refuses Atlas SRV lookups.";
+            throw new Error(`MongoDB Atlas DNS lookup failed. ${configuredServers}`);
+        }
         // A configured database must be reachable; otherwise the app could
         // appear healthy while silently failing to persist user data.
         throw error;

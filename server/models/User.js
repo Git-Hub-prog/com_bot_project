@@ -20,7 +20,6 @@ userSchema.virtual("spaces", {
   localField: "_id",
   foreignField: "owner",
 });
-userSchema.index({ email: 1 }, { unique: true });
 userSchema.set("toObject", { virtuals: true });
 userSchema.set("toJSON", { virtuals: true });
 
