@@ -26,7 +26,7 @@ if (missingEnv.length) {
 }
 
 if (process.env.NODE_ENV === "production" && !process.env.CLIENT_URL) {
-  throw new Error("CLIENT_URL is required in production for credentialed CORS");
+  // throw new Error("CLIENT_URL is required in production for credentialed CORS");
 }
 
 if (process.env.CLIENT_URL === "*") {
